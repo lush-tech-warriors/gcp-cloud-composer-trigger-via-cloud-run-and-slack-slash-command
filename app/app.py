@@ -45,10 +45,10 @@ def slash(body):
         else:
             response = {
                 "response_type": "in_channel",
-                "text": "Please specify which platform you want to start training on"
+                "text": "Please specify which platform you want to start training on stage|prod"
             }
             print(response)
-            return {response}
+            return response
 
         try:
             service_account_json = json.loads(SERVICE_ACCOUNT_KEY)
@@ -59,7 +59,7 @@ def slash(body):
                 "text": "Sorry, could not start the {} training run.".format(PLATFORM)
             }
             print(response)
-            return {response}
+            return response
 
         parsed_message = json.loads(x)
 
@@ -71,4 +71,4 @@ def slash(body):
             datetime_object = datetime.strptime(time_string.group(), '%Y-%m-%d %H:%M:%S')
 
         return {"response_type": "in_channel",
-                "text": "<@{}> has started a {} lens model training run.  It's identifier will be *[{}]*".format(PLATFORM, body['user_name'], datetime_object.strftime('%Y%m%d_%H%M%S'))}
+                "text": "<@{}> has started a {} lens model training run.  It's identifier will be *[{}]*".format(body['user_name'], PLATFORM, datetime_object.strftime('%Y%m%d_%H%M%S'))}
