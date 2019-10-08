@@ -29,13 +29,34 @@ def slash(body):
             'run_id': 'post-triggered-run-%s' % time_ident,
             'conf': json.dumps({'started_by' : body['user_name']}),
         }
+
+        if body['text'] == 'dev' or body['text'] == 'stage':
+            # Set stage airflow creds
+            SERVICE_ACCOUNT_KEY = base64.b64decode(os.environ['STAGE_SERVICE_ACCOUNT_KEY'])
+            IAP_CLIENT_ID = os.environ['STAGE_IAP_CLIENT_ID']
+            IAP_REQUEST_URL = os.environ['STAGE_IAP_REQUEST_URL']
+            PLATFORM = '`staging`'
+        elif body['text'] == 'prod':
+            # Set prod airflow creds
+            SERVICE_ACCOUNT_KEY = base64.b64decode(os.environ['PROD_SERVICE_ACCOUNT_KEY'])
+            IAP_CLIENT_ID = os.environ['PROD_IAP_CLIENT_ID']
+            IAP_REQUEST_URL = os.environ['PROD_IAP_REQUEST_URL']
+            PLATFORM = '`production`'
+        else:
+            response = {
+                "response_type": "in_channel",
+                "text": "Please specify which platform you want to start training on"
+            }
+            print(response)
+            return {response}
+
         try:
             service_account_json = json.loads(SERVICE_ACCOUNT_KEY)
             x = iap.make_iap_request(IAP_REQUEST_URL, IAP_CLIENT_ID, service_account_json, method='POST', data=json.dumps(payload))
         except:
             response = {
                 "response_type": "in_channel",
-                "text": "Sorry, could not start the training run."
+                "text": "Sorry, could not start the {} training run.".format(PLATFORM)
             }
             print(response)
             return {response}
@@ -50,4 +71,4 @@ def slash(body):
             datetime_object = datetime.strptime(time_string.group(), '%Y-%m-%d %H:%M:%S')
 
         return {"response_type": "in_channel",
-                "text": "<@{}> has started a lens model training run.  It's identifier will be *[{}]*".format(body['user_name'], datetime_object.strftime('%Y%m%d_%H%M%S'))}
+                "text": "<@{}> has started a {} lens model training run.  It's identifier will be *[{}]*".format(PLATFORM, body['user_name'], datetime_object.strftime('%Y%m%d_%H%M%S'))}
