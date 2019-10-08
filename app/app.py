@@ -30,13 +30,13 @@ def slash(body):
             'conf': json.dumps({'started_by' : body['user_name']}),
         }
 
-        if body['text'] == 'dev' or body['text'] == 'stage':
+        if 'text' in body and (body['text'] == 'dev' or body['text'] == 'stage'):
             # Set stage airflow creds
             SERVICE_ACCOUNT_KEY = base64.b64decode(os.environ['STAGE_SERVICE_ACCOUNT_KEY'])
             IAP_CLIENT_ID = os.environ['STAGE_IAP_CLIENT_ID']
             IAP_REQUEST_URL = os.environ['STAGE_IAP_REQUEST_URL']
             PLATFORM = '`staging`'
-        elif body['text'] == 'prod':
+        elif 'text' in body and body['text'] == 'prod':
             # Set prod airflow creds
             SERVICE_ACCOUNT_KEY = base64.b64decode(os.environ['PROD_SERVICE_ACCOUNT_KEY'])
             IAP_CLIENT_ID = os.environ['PROD_IAP_CLIENT_ID']
