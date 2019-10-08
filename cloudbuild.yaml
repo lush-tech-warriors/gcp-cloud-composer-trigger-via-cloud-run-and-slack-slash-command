@@ -7,6 +7,6 @@ steps:
   args: ['push', 'gcr.io/$PROJECT_ID/cloud-run-slack']
   # Deploy container image to Cloud Run
 - name: 'gcr.io/cloud-builders/gcloud'
-  args: ['beta', 'run', 'deploy', 'cloud-run-slack', '--image', 'gcr.io/$PROJECT_ID/cloud-run-slack', '--region', 'us-central1', '--update-env-vars', 'SLACK_API_TOKEN=${_SLACK_API_TOKEN}, VERIFICATION_TOKEN=${_VERIFICATION_TOKEN}, STAGE_SERVICE_ACCOUNT_KEY=${_STAGE_SERVICE_ACCOUNT_KEY}, STAGE_IAP_CLIENT_ID=${_STAGE_IAP_CLIENT_ID}, STAGE_IAP_REQUEST_URL=${_STAGE_IAP_REQUEST_URL}, PROD_SERVICE_ACCOUNT_KEY=${_PROD_SERVICE_ACCOUNT_KEY}, PROD_IAP_CLIENT_ID=${_PROD_IAP_CLIENT_ID}, PROD_IAP_REQUEST_URL=${_PROD_IAP_REQUEST_URL}']
+  args: ['beta', 'run', 'deploy', 'cloud-run-slack', '--image', 'gcr.io/$PROJECT_ID/cloud-run-slack', '--platform', 'managed', '--region', 'us-central1', '--update-env-vars', 'SLACK_API_TOKEN=${_SLACK_API_TOKEN}, VERIFICATION_TOKEN=${_VERIFICATION_TOKEN}, STAGE_SERVICE_ACCOUNT_KEY=${_STAGE_SERVICE_ACCOUNT_KEY}, STAGE_IAP_CLIENT_ID=${_STAGE_IAP_CLIENT_ID}, STAGE_IAP_REQUEST_URL=${_STAGE_IAP_REQUEST_URL}, PROD_SERVICE_ACCOUNT_KEY=${_PROD_SERVICE_ACCOUNT_KEY}, PROD_IAP_CLIENT_ID=${_PROD_IAP_CLIENT_ID}, PROD_IAP_REQUEST_URL=${_PROD_IAP_REQUEST_URL}']
 images:
 - gcr.io/$PROJECT_ID/cloud-run-slack
