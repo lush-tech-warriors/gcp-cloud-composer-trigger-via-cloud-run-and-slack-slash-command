@@ -66,7 +66,7 @@ def slash(body):
             print(response)
             return response
 
-        print(payload)
+        # print(payload)
 
         payload = {
             'run_id': 'post-triggered-run-%s' % time_ident,
