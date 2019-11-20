@@ -25,11 +25,7 @@ def slash(body):
         validEnvironments = ['dev', 'staging', 'prod']
         time_now = datetime.now(_LOCAL_TZ)
         time_ident = time_now.strftime('%Y%m%d%H%M%s%Z')
-
-        payload = {
-            'run_id': 'post-triggered-run-%s' % time_ident,
-            'conf': json.dumps({'started_by' : body['user_name']}),
-        }
+        airflow_conf = {'started_by' : body['user_name']}
 
         if 'text' in body:
             params = body['text'].strip()
@@ -41,7 +37,7 @@ def slash(body):
             else:
                 MODEL = 'lens'
 
-            payload['model'] = MODEL
+            airflow_conf['model_name'] = MODEL
 
             if (environment not in validEnvironments):
                 response = {
@@ -70,28 +66,13 @@ def slash(body):
             print(response)
             return response
 
-        # if 'text' in body and (body['text'] == 'dev' or body['text'] == 'stage'):
-        #     # Set stage airflow creds
-        #     SERVICE_ACCOUNT_KEY = base64.b64decode(os.environ['STAGE_SERVICE_ACCOUNT_KEY'])
-        #     IAP_CLIENT_ID = os.environ['STAGE_IAP_CLIENT_ID']
-        #     IAP_REQUEST_URL = os.environ['STAGE_IAP_REQUEST_URL']
-        #     PLATFORM = '`staging`'
-        # elif 'text' in body and body['text'] == 'prod':
-        #     # Set prod airflow creds
-        #     SERVICE_ACCOUNT_KEY = base64.b64decode(os.environ['PROD_SERVICE_ACCOUNT_KEY'])
-        #     IAP_CLIENT_ID = os.environ['PROD_IAP_CLIENT_ID']
-        #     IAP_REQUEST_URL = os.environ['PROD_IAP_REQUEST_URL']
-        #     PLATFORM = '`production`'
-        # else:
-        #     print(body['text'])
-        #     response = {
-        #         "response_type": "in_channel",
-        #         "text": "Please specify which platform you want to start training on stage|prod"
-        #     }
-        #     print(response)
-        #     return response
-
         print(payload)
+
+        payload = {
+            'run_id': 'post-triggered-run-%s' % time_ident,
+            'conf': json.dumps(airflow_conf),
+        }
+
         try:
             service_account_json = json.loads(SERVICE_ACCOUNT_KEY)
             x = iap.make_iap_request(IAP_REQUEST_URL, IAP_CLIENT_ID, service_account_json, method='POST', data=json.dumps(payload))
